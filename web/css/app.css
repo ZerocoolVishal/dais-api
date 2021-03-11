@@ -1,0 +1,66 @@
+.page {
+ margin-top: 80px;
+ padding-left: 20px;
+ padding-right: 20px;
+}
+.title {
+ font-size: 50px;
+ font-weight: bolder;
+}
+
+.page-content {
+ font-size: 25px;
+ font-weight: lighter;
+}
+
+.btn-brand {
+ color: #ffffff;
+ background-color: #000000;
+ font-weight: bold;
+ font-size: 20px;
+ border-radius: 5px;
+}
+
+.btn-brand:hover {
+ color: #ffffff;
+ background-color: #000000;
+ font-weight: bold;
+ font-size: 20px;
+}
+
+.card {
+ color: #ffffff;
+ background-color: #000000;
+ border-radius: 10px;
+}
+
+.card-title {
+ font-size: 25px;
+ font-weight: bold;
+}
+
+.bg-black {
+ color: #ffffff !important;
+ background-color: #000000 !important;
+}
+
+.map {
+ margin-bottom: -6px;
+}
+
+.box {
+ border: 1px solid #000000;
+ border-radius: 5px;
+ margin: 10px;
+ padding: 10px;
+}
+
+.box-title {
+ font-size: 18px;
+ font-weight: 600;
+ margin-bottom: 15px;
+}
+
+.box-value {
+ font-size: 15px;
+}
