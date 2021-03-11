@@ -478,6 +478,28 @@ class ApiController extends \yii\web\Controller
          * PART 1 ENDS
         */
 
+        /**
+         * PART 2 BEGINS
+         */
+        $part_2 = [];
+
+        $plot_cost = [];
+        $fungible_area_in_sq_feet = $part_1['total_permissible_built_up_area_including_fungible'];
+        $fungible_area_in_sq_m = $part_1['total_permissible_built_up_area_including_fungible']/10.764;
+        $plot_cost['luc_tax']['area'] = $fungible_area_in_sq_feet;
+        $plot_cost['luc_tax']['rate'] = $report['residential_redirecionar_rate'] * 1.6;
+        $plot_rate_percent = $plot_cost['luc_tax']['rate']/100;
+        $plot_cost['luc_tax']['amount'] = (($fungible_area_in_sq_m * $plot_rate_percent) / 10000000) * 2;
+        $plot_cost ['debris_management_noc']['amount'] = 0.15;
+        $plot_cost ['processing_fee_for_project_loan']['amount'] = 0.07;
+        $plot_cost ['purchasing_shares_from_bank']['amount'] = $plot_cost ['processing_fee_for_project_loan']['amount'] * 2.5;
+        $plot_cost['stamp_duty_registration_charges'] = 0;
+        $plot_cost['total_amount'] = $plot_cost['luc_tax']['amount'] + $plot_cost ['debris_management_noc']['amount'] + $plot_cost ['processing_fee_for_project_loan']['amount'] + $plot_cost ['purchasing_shares_from_bank']['amount'];
+
+        $part_2 ['plot_cost'] = $plot_cost;
+        $report['part_2'] = $part_2;
+       
+
         $this->response_code = 200;
         $this->data = $report;
 

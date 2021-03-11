@@ -12,3 +12,8 @@ return [
 
     'FEASIBILITY_REPORT_COST' => 15000
 ];
+function debugPrint($obj = "") {
+    echo '<pre>';
+    print_r($obj);
+    echo '</pre>';
+}
