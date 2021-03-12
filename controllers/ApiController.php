@@ -384,6 +384,7 @@ class ApiController extends \yii\web\Controller
         $note['free_fungible'] = $note['existing_built_up_area_as_per_society'] / 100 * 35;
         /* FUNGIBLE BY CHARGING PREMIUM = Total permissible fungible (8) LESS Free fungible  */
         $note['fungible_by_charging_premium'] = $part_1['fungible_fsi'] +  $part_1['perm_b_u_area'];
+        $note['fungible_by_charging_premium'] = $part_1['fungible_fsi'] -  $note['free_fungible'];
 
         /* Existing members (Residential)  */
         $note['existing_members_residential'] = $report['no_of_tenants'];
@@ -482,8 +483,10 @@ class ApiController extends \yii\web\Controller
          * PART 2 BEGINS
          */
         $part_2 = [];
+        //section 1
 
         $plot_cost = [];
+        $rr_rate = $report['residential_redirecionar_rate'];
         $fungible_area_in_sq_feet = $part_1['total_permissible_built_up_area_including_fungible'];
         $fungible_area_in_sq_m = $part_1['total_permissible_built_up_area_including_fungible']/10.764;
         $plot_cost['luc_tax']['area'] = $fungible_area_in_sq_feet;
@@ -495,11 +498,54 @@ class ApiController extends \yii\web\Controller
         $plot_cost ['purchasing_shares_from_bank']['amount'] = $plot_cost ['processing_fee_for_project_loan']['amount'] * 2.5;
         $plot_cost['stamp_duty_registration_charges'] = 0;
         $plot_cost['total_amount'] = $plot_cost['luc_tax']['amount'] + $plot_cost ['debris_management_noc']['amount'] + $plot_cost ['processing_fee_for_project_loan']['amount'] + $plot_cost ['purchasing_shares_from_bank']['amount'];
-
+//        debugPrint($plot_cost);
+//        exit;
         $part_2 ['plot_cost'] = $plot_cost;
-        $report['part_2'] = $part_2;
-       
+        /**
+         * Section 1 ends here
+         * */
 
+        /**
+         * Section 2
+         * */
+
+        $cost_of_approval = [];
+        $total_construction_area_sq_feet = $part_1['note']['total_construction_area']; //sq feet
+        $total_construction_area_sq_metre = $part_1['note']['total_construction_area']/10.764; //sq feet
+        $cost_of_approval['scrutiny_fees']['area'] = $total_construction_area_sq_metre;
+        $cost_of_approval['scrutiny_fees']['rate'] = 86;
+        $cost_of_approval['scrutiny_fees']['amount'] = ($total_construction_area_sq_metre * 86)/10000000;
+
+        $cost_of_approval['cfo_scrutiny_fees']['area'] = $total_construction_area_sq_metre;
+        $cost_of_approval['cfo_scrutiny_fees']['rate'] = 53;
+        $cost_of_approval['cfo_scrutiny_fees']['amount'] = ($total_construction_area_sq_metre * 53)/10000000;
+
+        $tdr_to_be_purchased_from_open_market_sq_mt = $part_1['note']['tdr_to_be_purchased_from_open_market']/10.764;
+        $cost_of_approval['tdr_utilization']['area'] = $tdr_to_be_purchased_from_open_market_sq_mt;
+        $cost_of_approval['tdr_utilization']['rate'] = (30250/100)*5;
+        $cost_of_approval['tdr_utilization']['amount'] = ($tdr_to_be_purchased_from_open_market_sq_mt *  $cost_of_approval['tdr_utilization']['rate'])/10000000;;
+
+        $cost_of_tdr['slum_tdr']['base_amount'] = $tdr_to_be_purchased_from_open_market_sq_mt;
+        $cost_of_tdr['slum_tdr']['percent'] = 70;
+        $cost_of_tdr['slum_tdr']['amount'] = ($rr_rate/100)*70;
+        $cost_of_tdr['gen_tdr']['percent'] = 35;
+        $cost_of_approval['cost_of_tdr'] = $cost_of_tdr;
+
+        $cost_of_approval['fsi_by_charging_premium']['area'] = $part_1['note']['fsi_by_charging_premium']/10.764;
+        $cost_of_approval['fsi_by_charging_premium']['rate'] = 20055.00;
+        $cost_of_approval['fsi_by_charging_premium']['amount'] = ((($cost_of_approval['fsi_by_charging_premium']['area']*20055.00)/10000000) / 100) *50;
+
+
+        $cost_of_approval['cost_of_fungible_fsi_premium']['area'] = $part_1['note']['fungible_by_charging_premium']/10.764;
+        $cost_of_approval['cost_of_fungible_fsi_premium']['rate'] = 20055.00;
+        $cost_of_approval['cost_of_fungible_fsi_premium']['amount'] = ((($cost_of_approval['cost_of_fungible_fsi_premium']['area'] * $cost_of_approval['cost_of_fungible_fsi_premium']['rate'])/10000000)/ 100) *50;
+
+       // $cost_of_approval['stair_case_lift_area'] = "";
+
+        $part_2 ['cost_of_approval'] = $cost_of_approval;
+//        debugPrint($cost_of_approval);
+//        exit;
+        $report['part_2'] = $part_2;
         $this->response_code = 200;
         $this->data = $report;
 
