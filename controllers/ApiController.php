@@ -523,7 +523,7 @@ class ApiController extends \yii\web\Controller
         $tdr_to_be_purchased_from_open_market_sq_mt = $part_1['note']['tdr_to_be_purchased_from_open_market']/10.764;
         $cost_of_approval['tdr_utilization']['area'] = $tdr_to_be_purchased_from_open_market_sq_mt;
         $cost_of_approval['tdr_utilization']['rate'] = (30250/100)*5;
-        $cost_of_approval['tdr_utilization']['amount'] = ($tdr_to_be_purchased_from_open_market_sq_mt *  $cost_of_approval['tdr_utilization']['rate'])/10000000;;
+        $cost_of_approval['tdr_utilization']['amount'] = ($tdr_to_be_purchased_from_open_market_sq_mt *  $cost_of_approval['tdr_utilization']['rate'])/10000000;
 
         $cost_of_tdr['slum_tdr']['base_amount'] = $tdr_to_be_purchased_from_open_market_sq_mt;
         $cost_of_tdr['slum_tdr']['percent'] = 70;
@@ -540,11 +540,47 @@ class ApiController extends \yii\web\Controller
         $cost_of_approval['cost_of_fungible_fsi_premium']['rate'] = 20055.00;
         $cost_of_approval['cost_of_fungible_fsi_premium']['amount'] = ((($cost_of_approval['cost_of_fungible_fsi_premium']['area'] * $cost_of_approval['cost_of_fungible_fsi_premium']['rate'])/10000000)/ 100) *50;
 
-       // $cost_of_approval['stair_case_lift_area'] = "";
+        $cost_of_approval['stair_case_lift_area']['area'] = $part_1['note']['construction_area_of_staircase_and_lift']/10.764;
+        $cost_of_approval['stair_case_lift_area']['rate'] = ($rr_rate / 100) *25;
+        $cost_of_approval['stair_case_lift_area']['amount'] = ((($cost_of_approval['stair_case_lift_area']['area'] * $cost_of_approval['stair_case_lift_area']['rate'])/10000000)/ 100) *50;
+
+        $cost_of_approval['development_charges_built_up_charges']['area'] = $part_1['note']['construction_of_net_built_up_area']/10.764;
+        $cost_of_approval['development_charges_built_up_charges']['rate'] = ($rr_rate / 100) *4;
+        $cost_of_approval['development_charges_built_up_charges']['amount'] = ($cost_of_approval['development_charges_built_up_charges']['area'] *  $cost_of_approval['development_charges_built_up_charges']['rate'])/10000000;
+
+        $cost_of_approval['development_charges_plot_component']['area'] = $part_1['balance_area_of_plot']/10.764;
+        $cost_of_approval['development_charges_plot_component']['rate'] = ($rr_rate / 100) *1;
+        $cost_of_approval['development_charges_plot_component']['amount'] = ($cost_of_approval['development_charges_plot_component']['area'] *  $cost_of_approval['development_charges_plot_component']['rate'])/10000000;
+
+        $cost_of_approval['development_cess']['area'] = 0;
+        $cost_of_approval['development_cess']['rate'] = 0;
+        $cost_of_approval['development_cess']['amount'] = 0;
+
+        $cost_of_approval['labour_cess']['area'] = $part_1['note']['construction_of_net_built_up_area']/10.764;
+        $cost_of_approval['labour_cess']['rate'] = (30250/100)*1;
+        $cost_of_approval['labour_cess']['amount'] = ($cost_of_approval['labour_cess']['area'] * $cost_of_approval['labour_cess']['rate']) /10000000;
+
+        $cost_of_approval['deficiency_premium_approximate']['area'] = "";
+        $cost_of_approval['deficiency_premium_approximate']['rate'] = "";
+        $cost_of_approval['deficiency_premium_approximate']['amount'] = (($part_1['deficient_area']['deficient_premium'] / 10000000) / 100) * 50;
+
+        $cost_of_approval['extra_water_charge']['area'] = $part_1['note']['construction_of_net_built_up_area']/10.764;
+        $cost_of_approval['extra_water_charge']['rate'] = 300;
+        $cost_of_approval['extra_water_charge']['amount'] = ($cost_of_approval['extra_water_charge']['area'] * $cost_of_approval['extra_water_charge']['rate']) /10000000;
+
+        $cost_of_approval['extra_sewage_charge']['area'] = $part_1['note']['construction_of_net_built_up_area']/10.764;
+        $cost_of_approval['extra_sewage_charge']['rate'] = 285;
+        $cost_of_approval['extra_sewage_charge']['amount'] = ($cost_of_approval['extra_sewage_charge']['area'] * $cost_of_approval['extra_sewage_charge']['rate']) /10000000;
+
+        $cost_of_approval['bmc_approval_cost']['area'] = $part_1['note']['construction_of_net_built_up_area'];
+        $cost_of_approval['bmc_approval_cost']['rate'] = 175; //TODO
+        $cost_of_approval['bmc_approval_cost']['amount'] = ($cost_of_approval['bmc_approval_cost']['area'] * $cost_of_approval['bmc_approval_cost']['rate']) /10000000;
+
+        $cost_of_approval['total_cost_approval_tdr_premium'] = $cost_of_approval['scrutiny_fees']['amount'] + $cost_of_approval['cfo_scrutiny_fees']['amount'] + $cost_of_approval['tdr_utilization']['amount'] + $cost_of_approval['fsi_by_charging_premium']['amount'] + $cost_of_approval['cost_of_fungible_fsi_premium']['amount'] + $cost_of_approval['stair_case_lift_area']['amount'] + $cost_of_approval['development_charges_built_up_charges']['amount'] + $cost_of_approval['development_charges_plot_component']['amount'] + $cost_of_approval['development_cess']['amount'] + $cost_of_approval['labour_cess']['amount'] + $cost_of_approval['deficiency_premium_approximate']['amount'] + $cost_of_approval['extra_water_charge']['amount'] + $cost_of_approval['extra_sewage_charge']['amount'] + $cost_of_approval['bmc_approval_cost']['amount'];
 
         $part_2 ['cost_of_approval'] = $cost_of_approval;
-//        debugPrint($cost_of_approval);
-//        exit;
+        debugPrint($cost_of_approval);
+        exit;
         $report['part_2'] = $part_2;
         $this->response_code = 200;
         $this->data = $report;
