@@ -579,8 +579,8 @@ class ApiController extends \yii\web\Controller
         $cost_of_approval['total_cost_approval_tdr_premium'] = $cost_of_approval['scrutiny_fees']['amount'] + $cost_of_approval['cfo_scrutiny_fees']['amount'] + $cost_of_approval['tdr_utilization']['amount'] + $cost_of_approval['fsi_by_charging_premium']['amount'] + $cost_of_approval['cost_of_fungible_fsi_premium']['amount'] + $cost_of_approval['stair_case_lift_area']['amount'] + $cost_of_approval['development_charges_built_up_charges']['amount'] + $cost_of_approval['development_charges_plot_component']['amount'] + $cost_of_approval['development_cess']['amount'] + $cost_of_approval['labour_cess']['amount'] + $cost_of_approval['deficiency_premium_approximate']['amount'] + $cost_of_approval['extra_water_charge']['amount'] + $cost_of_approval['extra_sewage_charge']['amount'] + $cost_of_approval['bmc_approval_cost']['amount'];
 
         $part_2 ['cost_of_approval'] = $cost_of_approval;
-        debugPrint($cost_of_approval);
-        exit;
+//        debugPrint($cost_of_approval);
+//        exit;
         $report['part_2'] = $part_2;
         $this->response_code = 200;
         $this->data = $report;
