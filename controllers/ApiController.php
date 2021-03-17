@@ -528,6 +528,7 @@ class ApiController extends \yii\web\Controller
         $cost_of_tdr['slum_tdr']['base_amount'] = $tdr_to_be_purchased_from_open_market_sq_mt;
         $cost_of_tdr['slum_tdr']['percent'] = 70;
         $cost_of_tdr['slum_tdr']['amount'] = ($rr_rate/100)*70;
+        $cost_of_tdr['slum_tdr']['true_amount'] = ($cost_of_tdr['slum_tdr']['base_amount']*$cost_of_tdr['slum_tdr']['amount']) / 10000000;
         $cost_of_tdr['gen_tdr']['percent'] = 35;
         $cost_of_approval['cost_of_tdr'] = $cost_of_tdr;
 
@@ -576,12 +577,132 @@ class ApiController extends \yii\web\Controller
         $cost_of_approval['bmc_approval_cost']['rate'] = 175; //TODO
         $cost_of_approval['bmc_approval_cost']['amount'] = ($cost_of_approval['bmc_approval_cost']['area'] * $cost_of_approval['bmc_approval_cost']['rate']) /10000000;
 
-        $cost_of_approval['total_cost_approval_tdr_premium'] = $cost_of_approval['scrutiny_fees']['amount'] + $cost_of_approval['cfo_scrutiny_fees']['amount'] + $cost_of_approval['tdr_utilization']['amount'] + $cost_of_approval['fsi_by_charging_premium']['amount'] + $cost_of_approval['cost_of_fungible_fsi_premium']['amount'] + $cost_of_approval['stair_case_lift_area']['amount'] + $cost_of_approval['development_charges_built_up_charges']['amount'] + $cost_of_approval['development_charges_plot_component']['amount'] + $cost_of_approval['development_cess']['amount'] + $cost_of_approval['labour_cess']['amount'] + $cost_of_approval['deficiency_premium_approximate']['amount'] + $cost_of_approval['extra_water_charge']['amount'] + $cost_of_approval['extra_sewage_charge']['amount'] + $cost_of_approval['bmc_approval_cost']['amount'];
+        $cost_of_approval['total_cost_approval_tdr_premium'] = $cost_of_approval['scrutiny_fees']['amount'] +
+            $cost_of_approval['cfo_scrutiny_fees']['amount'] +
+            $cost_of_approval['tdr_utilization']['amount'] +
+            $cost_of_tdr['slum_tdr']['true_amount'] +
+            $cost_of_approval['fsi_by_charging_premium']['amount'] +
+            $cost_of_approval['cost_of_fungible_fsi_premium']['amount'] +
+            $cost_of_approval['stair_case_lift_area']['amount'] +
+            $cost_of_approval['development_charges_built_up_charges']['amount'] +
+            $cost_of_approval['development_charges_plot_component']['amount'] +
+            $cost_of_approval['development_cess']['amount'] +
+            $cost_of_approval['labour_cess']['amount'] +
+            $cost_of_approval['deficiency_premium_approximate']['amount'] +
+            $cost_of_approval['extra_water_charge']['amount'] +
+            $cost_of_approval['extra_sewage_charge']['amount'] +
+            $cost_of_approval['bmc_approval_cost']['amount'];
 
         $part_2 ['cost_of_approval'] = $cost_of_approval;
 //        debugPrint($cost_of_approval);
 //        exit;
+        /**
+         * Section 3
+         * */
+        $constructionCost = [];
+        $constructionCost['const_area']['area'] = $part_1['note']['total_construction_area'];
+        $constructionCost['const_area']['rate'] = 2600.00;
+        $constructionCost['const_area']['amount'] = ($constructionCost['const_area']['area'] * $constructionCost['const_area']['rate']) / 10000000;
+
+        $constructionCost['puzzle_parking']['amount'] = 2; //TODO
+
+        $constructionCost['construction_cost_parking_total'] = $constructionCost['const_area']['amount'] + $constructionCost['puzzle_parking']['amount'];
+        $constructionCost['construction_cost_parking_gst'] = ($constructionCost['construction_cost_parking_total'] / 100) * 18;
+        $constructionCost['total_construction_expense'] = $constructionCost['construction_cost_parking_total'] + $constructionCost['construction_cost_parking_gst'];
+        $part_2['constructionCost'] = $constructionCost;
+        $rental_shifting_charges = [];
+        $rental_shifting_charges['one_month_rent']['cost'] = (float)$part_1['note']['total_existing_carpet_area'];
+        $rental_shifting_charges['one_month_rent']['unit'] = 50; //TODO
+        $rental_shifting_charges['one_month_rent']['amount'] = ($rental_shifting_charges['one_month_rent']['cost'] * $rental_shifting_charges['one_month_rent']['unit']) / 10000000;
+
+        $rental_shifting_charges['one_year_rent']['cost'] = (float)$rental_shifting_charges['one_month_rent']['amount'];
+        $rental_shifting_charges['one_year_rent']['unit'] = 12;
+        $rental_shifting_charges['one_year_rent']['amount'] = $rental_shifting_charges['one_month_rent']['amount'] * 12;
+
+        $rental_shifting_charges['second_year_rent']['amount'] = $rental_shifting_charges['one_year_rent']['amount'];
+        $rental_shifting_charges['total_rent'] = $rental_shifting_charges['one_year_rent']['amount'] + $rental_shifting_charges['second_year_rent']['amount'];
+
+        $holder = number_format($rental_shifting_charges['total_rent'],2    );
+        $holder2 = $rental_shifting_charges['total_rent'];
+//        debugPrint($holder);
+//        debugPrint($holder2);
+//        exit;
+
+        $brokerage = [];
+        $brokerage['area'] = $rental_shifting_charges['one_month_rent']['cost'];
+        $brokerage['rate'] = $rental_shifting_charges['one_month_rent']['unit'];
+        $brokerage['amount'] = $rental_shifting_charges['one_month_rent']['amount'];
+        $rental_shifting_charges['brokerage'] = $brokerage;
+
+        $shifting_and_reshifting = [];
+        $shifting_and_reshifting['existing_members'] = $part_1['note']['existing_members_residential'];
+        $shifting_and_reshifting['unit'] = 30000;
+        $shifting_and_reshifting['amount'] = ($shifting_and_reshifting['existing_members'] * $shifting_and_reshifting['unit']) / 10000000;
+        $rental_shifting_charges['shifting_and_reshifting'] = $shifting_and_reshifting;
+
+
+        $shifting_and_reshifting['total_cost_of_rental_shifting_brokerage'] = $rental_shifting_charges['total_rent'] + $brokerage['amount'] + $shifting_and_reshifting['amount'];
+
+        $rental_shifting_charges['shifting_and_reshifting'] = $shifting_and_reshifting;
+        $part_2['rental_shifting_charges'] = $rental_shifting_charges;
+
+        $all_consultation_fee_including_gst = [];
+        $all_consultation_fee_including_gst ['amount'] = (($constructionCost['construction_cost_parking_total']/ 100) * 10 ) * 1.18;
+
+        $part_2 ['all_consultation_fee_including_gst'] = $all_consultation_fee_including_gst;
+        $corpus_fund = [];
+        $corpus_fund ['area']= "";
+        $corpus_fund ['rate']= "";
+        $corpus_fund ['amount']= "";
+        $part_2['corpus_fund'] = $corpus_fund;
+        /**
+         * Part 3 early Calculation (All Calculations area SQ. FT)
+         * */
+        $part_3 = [];
+        $part_3['total_rera_carpet'] = $part_1['rera_carpet_area'];
+        $part_3['existing_carpet_area'] = 24111.00; //TODO
+        $part_3['percentage_of_additional_carpet_area'] = 16; //TODO
+        $part_3['percentage_of_additional_carpet_area'] = ($part_3['existing_carpet_area'] / 100) * $part_3['percentage_of_additional_carpet_area'];
+        $part_3['rera_carpet_area_for_existing_members'] =  $part_3['existing_carpet_area'] + $part_3['percentage_of_additional_carpet_area'];
+        $part_3['rera_carpet_area_for_sale'] =  $part_3['total_rera_carpet'] - $part_3['rera_carpet_area_for_existing_members'];
+        $part_3['break_even_for_carpet_area_sale'] =  ""; //Not calculated yet
+
+        $part_3['sale_rate_considered'] = 18500.00 ; //TODO
+        $part_3['sale_recovery'] = ($part_3['sale_rate_considered'] * $part_3['rera_carpet_area_for_sale']) / 10000000; //TODO
+
+        $part_2['brokerage_and_commision_sale_value']['amount'] =  $part_3['sale_recovery'];
+        $part_2['brokerage_and_commision_sale_value']['total'] =  ($part_3['sale_recovery'] / 100 ) * 2.5 ;
+
+        $part_2['total_one_to_seven'] = $part_2['plot_cost']['total_amount'] + $part_2['cost_of_approval']['total_cost_approval_tdr_premium'] + $part_2['constructionCost']['total_construction_expense']
+            + $part_2['rental_shifting_charges']['shifting_and_reshifting']['total_cost_of_rental_shifting_brokerage'] + $part_2['all_consultation_fee_including_gst']['amount'] + $part_2['brokerage_and_commision_sale_value']['total'];
+
+        $part_2['total_one_to_seven_contingences'] = ($part_2['total_one_to_seven'] / 100) * 3;
+        $part_2['total_cost_part_2'] = $part_2['total_one_to_seven'] + $part_2['total_one_to_seven_contingences'];
+
+        $part_2['expected_investment'] = ($part_2['total_cost_part_2'] / 100) * 40;
+        $part_2['interest_of_investment_per_annum'] = ($part_2['expected_investment'] / 100) * 12.5;
+        $part_2['interest_of_two_years'] = $part_2['interest_of_investment_per_annum'] * 2;
+
+        $part_2['part_two_total_cost_of_project'] = $part_2['total_cost_part_2'] + $part_2['interest_of_two_years'];
+
+        $part_3['total_project_cost'] = $part_2['part_two_total_cost_of_project'] * 10000000;
+        $part_3['break_even_for_carpet_area_sale'] = $part_3['total_project_cost'] / $part_3['rera_carpet_area_for_sale'];
+        $part_3['by_returning_share_to_bank'] = $part_2['plot_cost']['purchasing_shares_from_bank']['amount'];
+        $part_3['from_parking'] = 3.00; //TODO
+        $part_3['total_recovery'] = $part_3['sale_recovery'] + $part_3['by_returning_share_to_bank'] + $part_3['from_parking'];
+        $part_3['balance'] = $part_3['total_recovery'] - $part_2['part_two_total_cost_of_project'];
+        $part_3['stamp_duty_and_charges'] = ($part_3['sale_recovery'] / 100) * 5;
+        $part_3['net_balance'] = $part_3['balance'] - $part_3['stamp_duty_and_charges'];
+
+//        debugPrint($part_3);
+//        debugPrint($part_2);
+//        exit;
+
+//        debugPrint($rental_shifting_charges);
+//        exit;
         $report['part_2'] = $part_2;
+        $report['part_3'] = $part_3;
+
         $this->response_code = 200;
         $this->data = $report;
 
