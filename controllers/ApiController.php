@@ -35,14 +35,14 @@ class ApiController extends \yii\web\Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'corsFilter' => [
                 'class' => \yii\filters\Cors::className(),
                 'cors' => [
                     // restrict access to
-                    'Origin' => ['http://localhost:4200', 'http://3.137.151.134', 'http://dais.vesolutions.in', 'https://dais.vesolutions.in', 'http://vesolutions.in', 'https://vesolutions.in'],
+                    'Origin' => ['http://localhost:4200', 'http://localhost:8100', 'http://3.137.151.134', 'http://dais.vesolutions.in', 'https://dais.vesolutions.in', 'http://vesolutions.in', 'https://vesolutions.in'],
                     // Allow only POST and PUT methods
                     'Access-Control-Request-Method' => ['GET', 'HEAD', 'POST', 'PUT'],
                     // Allow only headers 'X-Wsse'
@@ -61,7 +61,7 @@ class ApiController extends \yii\web\Controller
     /**
      * {@inheritdoc}
      */
-    public function beforeAction($action)
+    public function beforeAction($action): bool
     {
         Yii::$app->controller->enableCsrfValidation = false;
         return parent::beforeAction($action);
@@ -70,7 +70,8 @@ class ApiController extends \yii\web\Controller
     /**
      * Send JSON response
      */
-    private function sendResponse() {
+    private function sendResponse(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
         return [
             'status' => $this->response_code,
@@ -82,7 +83,7 @@ class ApiController extends \yii\web\Controller
     /**
      * Test Function
      */
-    public function actionIndex()
+    public function actionIndex(): array
     {
         return $this->sendResponse();
     }
@@ -94,7 +95,7 @@ class ApiController extends \yii\web\Controller
      *
      * @return array
      */
-    private function getUser(Users $model)
+    private function getUser(Users $model): array
     {
         return [
             'id' => (string)$model->user_id,
@@ -107,7 +108,7 @@ class ApiController extends \yii\web\Controller
     /**
      * Register & Login user
      */
-    public function actionSocialRegister()
+    public function actionSocialRegister(): array
     {
         $request = Yii::$app->request->bodyParams;
         if (!empty($request)) {
@@ -150,7 +151,8 @@ class ApiController extends \yii\web\Controller
     /**
      * Book an expert visit
      */
-    public function actionBookExpertVisit() {
+    public function actionBookExpertVisit(): array
+    {
 
         $request = Yii::$app->request->bodyParams;
 
@@ -177,7 +179,7 @@ class ApiController extends \yii\web\Controller
         $model->visit_date = $visit_date;
         $model->created_at = $book_date;
 
-        if($model->save()) {
+        if ($model->save()) {
             $booked_visits = BookExpertVisit::find()
                 ->where(['user_id' => $model->user_id])
                 ->orderBy(['created_at' => SORT_DESC])
@@ -194,7 +196,8 @@ class ApiController extends \yii\web\Controller
     /**
      * Get list of booked visits
      */
-    public function actionExpertVisitHistory($user_id) {
+    public function actionExpertVisitHistory($user_id): array
+    {
 
         $model = BookExpertVisit::find()
             ->where(['user_id' => $user_id])
@@ -210,7 +213,8 @@ class ApiController extends \yii\web\Controller
     /**
      * Book a meeting with DAIS
      */
-    public function actionBookMeeting() {
+    public function actionBookMeeting(): array
+    {
 
         $request = Yii::$app->request->bodyParams;
 
@@ -242,7 +246,8 @@ class ApiController extends \yii\web\Controller
     /**
      * Get booked meetings
      */
-    public function actionShowBookedMeeting($user_id) {
+    public function actionShowBookedMeeting($user_id): array
+    {
 
         $model = Meeting::find()
             ->where(['user_id' => $user_id])
@@ -258,7 +263,8 @@ class ApiController extends \yii\web\Controller
     /**
      * Save inputs of Feasibility report (FREE) (ANGULAR - CREATE)
      */
-    public function actionFreeFeasibilityReport() {
+    public function actionFreeFeasibilityReport(): array
+    {
 
         $request = Yii::$app->request->bodyParams;
 
@@ -270,7 +276,7 @@ class ApiController extends \yii\web\Controller
         $model->load($feasibilityReport);
         $model->created_at = date('Y-m-d H:i:s');
 
-        if($model->save()) {
+        if ($model->save()) {
 
             $reports = FeasibilityReport::find()
                 ->where(['user_id' => $model->user_id, 'is_paid' => 0])
@@ -280,8 +286,7 @@ class ApiController extends \yii\web\Controller
             $this->message = "Feasibility report generated successfully";
             $this->response_code = 200;
             $this->data = $reports;
-        }
-        else {
+        } else {
             $this->message = "Internal service error";
             $this->response_code = 500;
             $this->data = $model->getErrors();
@@ -293,7 +298,8 @@ class ApiController extends \yii\web\Controller
     /**
      * Get list of feasibility reports (FREE) (ANGULAR - LIST)
      */
-    public function actionFreeFeasibilityReportHistory($user_id) {
+    public function actionFreeFeasibilityReportHistory($user_id): array
+    {
 
         $reports = FeasibilityReport::find()
             ->where(['user_id' => $user_id, 'is_paid' => 0])
@@ -309,7 +315,8 @@ class ApiController extends \yii\web\Controller
     /**
      * Get Feasibility report (FREE & PAYED) (ANGULAR - VIEW REPORT DETAILS)
      */
-    public function actionFreeFeasibilityReportDetails($user_id, $feasibility_report_id) {
+    public function actionFreeFeasibilityReportDetails($user_id, $feasibility_report_id): array
+    {
 
         $report = FeasibilityReport::find()
             ->where(['user_id' => $user_id, 'feasibility_report_id' => $feasibility_report_id])
@@ -350,7 +357,7 @@ class ApiController extends \yii\web\Controller
         $fsi_permissible['admissible_tdr'] = 0.70; // TODO: Need to update according to road width
         $fsi_permissible['admissible_tdr_area'] = $part_1['net_area_of_plot'] * $fsi_permissible['admissible_tdr'];
 
-        $fsi_permissible['maximum_fsi_cap'] =  $fsi_permissible['zonal_basic_fsi'] + $fsi_permissible['additional_fsi'] + $fsi_permissible['admissible_tdr'];
+        $fsi_permissible['maximum_fsi_cap'] = $fsi_permissible['zonal_basic_fsi'] + $fsi_permissible['additional_fsi'] + $fsi_permissible['admissible_tdr'];
         $fsi_permissible['total'] = $fsi_permissible['zonal_basic_fsi_area'] + $fsi_permissible['additional_fsi_area'] + $fsi_permissible['admissible_tdr_area'];
 
         $part_1['fsi_permissible'] = $fsi_permissible;
@@ -383,8 +390,8 @@ class ApiController extends \yii\web\Controller
         /* FREE FUNGIBLE 35% OF EXISTING B/U AREA */
         $note['free_fungible'] = $note['existing_built_up_area_as_per_society'] / 100 * 35;
         /* FUNGIBLE BY CHARGING PREMIUM = Total permissible fungible (8) LESS Free fungible  */
-        $note['fungible_by_charging_premium'] = $part_1['fungible_fsi'] +  $part_1['perm_b_u_area'];
-        $note['fungible_by_charging_premium'] = $part_1['fungible_fsi'] -  $note['free_fungible'];
+        $note['fungible_by_charging_premium'] = $part_1['fungible_fsi'] + $part_1['perm_b_u_area'];
+        $note['fungible_by_charging_premium'] = $part_1['fungible_fsi'] - $note['free_fungible'];
 
         /* Existing members (Residential)  */
         $note['existing_members_residential'] = $report['no_of_tenants'];
@@ -411,13 +418,13 @@ class ApiController extends \yii\web\Controller
         $note['construction_area_for_parking'] = $note['construction_of_net_built_up_area'] / 100 * 25;
 
         /* TOTAL CONSTRUCTION AREA */
-        $note['total_construction_area'] = $note['construction_of_net_built_up_area'] + $note['construction_area_of_staircase_and_lift'] +  $note['construction_area_for_parking'];
+        $note['total_construction_area'] = $note['construction_of_net_built_up_area'] + $note['construction_area_of_staircase_and_lift'] + $note['construction_area_for_parking'];
 
         $part_1['note'] = $note;
 
         /* ADDITIONAL AREA */
         $additional_area['additional_area'] = $part_1['total_permissible_built_up_area_including_fungible'] - $part_1['net_area_of_plot'];
-        $additional_area['slum'] =  $note['tdr_to_be_purchased_from_open_market'];
+        $additional_area['slum'] = $note['tdr_to_be_purchased_from_open_market'];
         $additional_area['gen_tdr_and_incentive'] = $fsi_permissible['admissible_tdr_area'] - $additional_area['slum'];
         $additional_area['FSI_0_50'] = $note['fsi_by_charging_premium'];
         $additional_area['fungible'] = $part_1['fungible_fsi'];
@@ -477,7 +484,7 @@ class ApiController extends \yii\web\Controller
 
         /**
          * PART 1 ENDS
-        */
+         */
 
         /**
          * PART 2 BEGINS
@@ -488,10 +495,10 @@ class ApiController extends \yii\web\Controller
         $plot_cost = [];
         $rr_rate = $report['residential_redirecionar_rate'];
         $fungible_area_in_sq_feet = $part_1['total_permissible_built_up_area_including_fungible'];
-        $fungible_area_in_sq_m = $part_1['total_permissible_built_up_area_including_fungible']/10.764;
+        $fungible_area_in_sq_m = $part_1['total_permissible_built_up_area_including_fungible'] / 10.764;
         $plot_cost['luc_tax']['area'] = $fungible_area_in_sq_feet;
         $plot_cost['luc_tax']['rate'] = $report['residential_redirecionar_rate'] * 1.6;
-        $plot_rate_percent = $plot_cost['luc_tax']['rate']/100;
+        $plot_rate_percent = $plot_cost['luc_tax']['rate'] / 100;
         $plot_cost['luc_tax']['amount'] = (($fungible_area_in_sq_m * $plot_rate_percent) / 10000000) * 2;
         $plot_cost ['debris_management_noc']['amount'] = 0.15;
         $plot_cost ['processing_fee_for_project_loan']['amount'] = 0.07;
@@ -511,71 +518,71 @@ class ApiController extends \yii\web\Controller
 
         $cost_of_approval = [];
         $total_construction_area_sq_feet = $part_1['note']['total_construction_area']; //sq feet
-        $total_construction_area_sq_metre = $part_1['note']['total_construction_area']/10.764; //sq feet
+        $total_construction_area_sq_metre = $part_1['note']['total_construction_area'] / 10.764; //sq feet
         $cost_of_approval['scrutiny_fees']['area'] = $total_construction_area_sq_metre;
         $cost_of_approval['scrutiny_fees']['rate'] = 86;
-        $cost_of_approval['scrutiny_fees']['amount'] = ($total_construction_area_sq_metre * 86)/10000000;
+        $cost_of_approval['scrutiny_fees']['amount'] = ($total_construction_area_sq_metre * 86) / 10000000;
 
         $cost_of_approval['cfo_scrutiny_fees']['area'] = $total_construction_area_sq_metre;
         $cost_of_approval['cfo_scrutiny_fees']['rate'] = 53;
-        $cost_of_approval['cfo_scrutiny_fees']['amount'] = ($total_construction_area_sq_metre * 53)/10000000;
+        $cost_of_approval['cfo_scrutiny_fees']['amount'] = ($total_construction_area_sq_metre * 53) / 10000000;
 
-        $tdr_to_be_purchased_from_open_market_sq_mt = $part_1['note']['tdr_to_be_purchased_from_open_market']/10.764;
+        $tdr_to_be_purchased_from_open_market_sq_mt = $part_1['note']['tdr_to_be_purchased_from_open_market'] / 10.764;
         $cost_of_approval['tdr_utilization']['area'] = $tdr_to_be_purchased_from_open_market_sq_mt;
-        $cost_of_approval['tdr_utilization']['rate'] = (30250/100)*5;
-        $cost_of_approval['tdr_utilization']['amount'] = ($tdr_to_be_purchased_from_open_market_sq_mt *  $cost_of_approval['tdr_utilization']['rate'])/10000000;
+        $cost_of_approval['tdr_utilization']['rate'] = (30250 / 100) * 5;
+        $cost_of_approval['tdr_utilization']['amount'] = ($tdr_to_be_purchased_from_open_market_sq_mt * $cost_of_approval['tdr_utilization']['rate']) / 10000000;
 
         $cost_of_tdr['slum_tdr']['base_amount'] = $tdr_to_be_purchased_from_open_market_sq_mt;
         $cost_of_tdr['slum_tdr']['percent'] = 70;
-        $cost_of_tdr['slum_tdr']['amount'] = ($rr_rate/100)*70;
-        $cost_of_tdr['slum_tdr']['true_amount'] = ($cost_of_tdr['slum_tdr']['base_amount']*$cost_of_tdr['slum_tdr']['amount']) / 10000000;
+        $cost_of_tdr['slum_tdr']['amount'] = ($rr_rate / 100) * 70;
+        $cost_of_tdr['slum_tdr']['true_amount'] = ($cost_of_tdr['slum_tdr']['base_amount'] * $cost_of_tdr['slum_tdr']['amount']) / 10000000;
         $cost_of_tdr['gen_tdr']['percent'] = 35;
         $cost_of_approval['cost_of_tdr'] = $cost_of_tdr;
 
-        $cost_of_approval['fsi_by_charging_premium']['area'] = $part_1['note']['fsi_by_charging_premium']/10.764;
+        $cost_of_approval['fsi_by_charging_premium']['area'] = $part_1['note']['fsi_by_charging_premium'] / 10.764;
         $cost_of_approval['fsi_by_charging_premium']['rate'] = 20055.00;
-        $cost_of_approval['fsi_by_charging_premium']['amount'] = ((($cost_of_approval['fsi_by_charging_premium']['area']*20055.00)/10000000) / 100) *50;
+        $cost_of_approval['fsi_by_charging_premium']['amount'] = ((($cost_of_approval['fsi_by_charging_premium']['area'] * 20055.00) / 10000000) / 100) * 50;
 
 
-        $cost_of_approval['cost_of_fungible_fsi_premium']['area'] = $part_1['note']['fungible_by_charging_premium']/10.764;
+        $cost_of_approval['cost_of_fungible_fsi_premium']['area'] = $part_1['note']['fungible_by_charging_premium'] / 10.764;
         $cost_of_approval['cost_of_fungible_fsi_premium']['rate'] = 20055.00;
-        $cost_of_approval['cost_of_fungible_fsi_premium']['amount'] = ((($cost_of_approval['cost_of_fungible_fsi_premium']['area'] * $cost_of_approval['cost_of_fungible_fsi_premium']['rate'])/10000000)/ 100) *50;
+        $cost_of_approval['cost_of_fungible_fsi_premium']['amount'] = ((($cost_of_approval['cost_of_fungible_fsi_premium']['area'] * $cost_of_approval['cost_of_fungible_fsi_premium']['rate']) / 10000000) / 100) * 50;
 
-        $cost_of_approval['stair_case_lift_area']['area'] = $part_1['note']['construction_area_of_staircase_and_lift']/10.764;
-        $cost_of_approval['stair_case_lift_area']['rate'] = ($rr_rate / 100) *25;
-        $cost_of_approval['stair_case_lift_area']['amount'] = ((($cost_of_approval['stair_case_lift_area']['area'] * $cost_of_approval['stair_case_lift_area']['rate'])/10000000)/ 100) *50;
+        $cost_of_approval['stair_case_lift_area']['area'] = $part_1['note']['construction_area_of_staircase_and_lift'] / 10.764;
+        $cost_of_approval['stair_case_lift_area']['rate'] = ($rr_rate / 100) * 25;
+        $cost_of_approval['stair_case_lift_area']['amount'] = ((($cost_of_approval['stair_case_lift_area']['area'] * $cost_of_approval['stair_case_lift_area']['rate']) / 10000000) / 100) * 50;
 
-        $cost_of_approval['development_charges_built_up_charges']['area'] = $part_1['note']['construction_of_net_built_up_area']/10.764;
-        $cost_of_approval['development_charges_built_up_charges']['rate'] = ($rr_rate / 100) *4;
-        $cost_of_approval['development_charges_built_up_charges']['amount'] = ($cost_of_approval['development_charges_built_up_charges']['area'] *  $cost_of_approval['development_charges_built_up_charges']['rate'])/10000000;
+        $cost_of_approval['development_charges_built_up_charges']['area'] = $part_1['note']['construction_of_net_built_up_area'] / 10.764;
+        $cost_of_approval['development_charges_built_up_charges']['rate'] = ($rr_rate / 100) * 4;
+        $cost_of_approval['development_charges_built_up_charges']['amount'] = ($cost_of_approval['development_charges_built_up_charges']['area'] * $cost_of_approval['development_charges_built_up_charges']['rate']) / 10000000;
 
-        $cost_of_approval['development_charges_plot_component']['area'] = $part_1['balance_area_of_plot']/10.764;
-        $cost_of_approval['development_charges_plot_component']['rate'] = ($rr_rate / 100) *1;
-        $cost_of_approval['development_charges_plot_component']['amount'] = ($cost_of_approval['development_charges_plot_component']['area'] *  $cost_of_approval['development_charges_plot_component']['rate'])/10000000;
+        $cost_of_approval['development_charges_plot_component']['area'] = $part_1['balance_area_of_plot'] / 10.764;
+        $cost_of_approval['development_charges_plot_component']['rate'] = ($rr_rate / 100) * 1;
+        $cost_of_approval['development_charges_plot_component']['amount'] = ($cost_of_approval['development_charges_plot_component']['area'] * $cost_of_approval['development_charges_plot_component']['rate']) / 10000000;
 
         $cost_of_approval['development_cess']['area'] = 0;
         $cost_of_approval['development_cess']['rate'] = 0;
         $cost_of_approval['development_cess']['amount'] = 0;
 
-        $cost_of_approval['labour_cess']['area'] = $part_1['note']['construction_of_net_built_up_area']/10.764;
-        $cost_of_approval['labour_cess']['rate'] = (30250/100)*1;
-        $cost_of_approval['labour_cess']['amount'] = ($cost_of_approval['labour_cess']['area'] * $cost_of_approval['labour_cess']['rate']) /10000000;
+        $cost_of_approval['labour_cess']['area'] = $part_1['note']['construction_of_net_built_up_area'] / 10.764;
+        $cost_of_approval['labour_cess']['rate'] = (30250 / 100) * 1;
+        $cost_of_approval['labour_cess']['amount'] = ($cost_of_approval['labour_cess']['area'] * $cost_of_approval['labour_cess']['rate']) / 10000000;
 
         $cost_of_approval['deficiency_premium_approximate']['area'] = "";
         $cost_of_approval['deficiency_premium_approximate']['rate'] = "";
         $cost_of_approval['deficiency_premium_approximate']['amount'] = (($part_1['deficient_area']['deficient_premium'] / 10000000) / 100) * 50;
 
-        $cost_of_approval['extra_water_charge']['area'] = $part_1['note']['construction_of_net_built_up_area']/10.764;
+        $cost_of_approval['extra_water_charge']['area'] = $part_1['note']['construction_of_net_built_up_area'] / 10.764;
         $cost_of_approval['extra_water_charge']['rate'] = 300;
-        $cost_of_approval['extra_water_charge']['amount'] = ($cost_of_approval['extra_water_charge']['area'] * $cost_of_approval['extra_water_charge']['rate']) /10000000;
+        $cost_of_approval['extra_water_charge']['amount'] = ($cost_of_approval['extra_water_charge']['area'] * $cost_of_approval['extra_water_charge']['rate']) / 10000000;
 
-        $cost_of_approval['extra_sewage_charge']['area'] = $part_1['note']['construction_of_net_built_up_area']/10.764;
+        $cost_of_approval['extra_sewage_charge']['area'] = $part_1['note']['construction_of_net_built_up_area'] / 10.764;
         $cost_of_approval['extra_sewage_charge']['rate'] = 285;
-        $cost_of_approval['extra_sewage_charge']['amount'] = ($cost_of_approval['extra_sewage_charge']['area'] * $cost_of_approval['extra_sewage_charge']['rate']) /10000000;
+        $cost_of_approval['extra_sewage_charge']['amount'] = ($cost_of_approval['extra_sewage_charge']['area'] * $cost_of_approval['extra_sewage_charge']['rate']) / 10000000;
 
         $cost_of_approval['bmc_approval_cost']['area'] = $part_1['note']['construction_of_net_built_up_area'];
         $cost_of_approval['bmc_approval_cost']['rate'] = 175; //TODO
-        $cost_of_approval['bmc_approval_cost']['amount'] = ($cost_of_approval['bmc_approval_cost']['area'] * $cost_of_approval['bmc_approval_cost']['rate']) /10000000;
+        $cost_of_approval['bmc_approval_cost']['amount'] = ($cost_of_approval['bmc_approval_cost']['area'] * $cost_of_approval['bmc_approval_cost']['rate']) / 10000000;
 
         $cost_of_approval['total_cost_approval_tdr_premium'] = $cost_of_approval['scrutiny_fees']['amount'] +
             $cost_of_approval['cfo_scrutiny_fees']['amount'] +
@@ -622,7 +629,7 @@ class ApiController extends \yii\web\Controller
         $rental_shifting_charges['second_year_rent']['amount'] = $rental_shifting_charges['one_year_rent']['amount'];
         $rental_shifting_charges['total_rent'] = $rental_shifting_charges['one_year_rent']['amount'] + $rental_shifting_charges['second_year_rent']['amount'];
 
-        $holder = number_format($rental_shifting_charges['total_rent'],2    );
+        $holder = number_format($rental_shifting_charges['total_rent'], 2);
         $holder2 = $rental_shifting_charges['total_rent'];
 //        debugPrint($holder);
 //        debugPrint($holder2);
@@ -647,13 +654,13 @@ class ApiController extends \yii\web\Controller
         $part_2['rental_shifting_charges'] = $rental_shifting_charges;
 
         $all_consultation_fee_including_gst = [];
-        $all_consultation_fee_including_gst ['amount'] = (($constructionCost['construction_cost_parking_total']/ 100) * 10 ) * 1.18;
+        $all_consultation_fee_including_gst ['amount'] = (($constructionCost['construction_cost_parking_total'] / 100) * 10) * 1.18;
 
         $part_2 ['all_consultation_fee_including_gst'] = $all_consultation_fee_including_gst;
         $corpus_fund = [];
-        $corpus_fund ['area']= "";
-        $corpus_fund ['rate']= "";
-        $corpus_fund ['amount']= "";
+        $corpus_fund ['area'] = "";
+        $corpus_fund ['rate'] = "";
+        $corpus_fund ['amount'] = "";
         $part_2['corpus_fund'] = $corpus_fund;
         /**
          * Part 3 early Calculation (All Calculations area SQ. FT)
@@ -663,15 +670,15 @@ class ApiController extends \yii\web\Controller
         $part_3['existing_carpet_area'] = 24111.00; //TODO
         $part_3['percentage_of_additional_carpet_area'] = 16; //TODO
         $part_3['percentage_of_additional_carpet_area'] = ($part_3['existing_carpet_area'] / 100) * $part_3['percentage_of_additional_carpet_area'];
-        $part_3['rera_carpet_area_for_existing_members'] =  $part_3['existing_carpet_area'] + $part_3['percentage_of_additional_carpet_area'];
-        $part_3['rera_carpet_area_for_sale'] =  $part_3['total_rera_carpet'] - $part_3['rera_carpet_area_for_existing_members'];
-        $part_3['break_even_for_carpet_area_sale'] =  ""; //Not calculated yet
+        $part_3['rera_carpet_area_for_existing_members'] = $part_3['existing_carpet_area'] + $part_3['percentage_of_additional_carpet_area'];
+        $part_3['rera_carpet_area_for_sale'] = $part_3['total_rera_carpet'] - $part_3['rera_carpet_area_for_existing_members'];
+        $part_3['break_even_for_carpet_area_sale'] = ""; //Not calculated yet
 
-        $part_3['sale_rate_considered'] = 18500.00 ; //TODO
+        $part_3['sale_rate_considered'] = 18500.00; //TODO
         $part_3['sale_recovery'] = ($part_3['sale_rate_considered'] * $part_3['rera_carpet_area_for_sale']) / 10000000; //TODO
 
-        $part_2['brokerage_and_commision_sale_value']['amount'] =  $part_3['sale_recovery'];
-        $part_2['brokerage_and_commision_sale_value']['total'] =  ($part_3['sale_recovery'] / 100 ) * 2.5 ;
+        $part_2['brokerage_and_commision_sale_value']['amount'] = $part_3['sale_recovery'];
+        $part_2['brokerage_and_commision_sale_value']['total'] = ($part_3['sale_recovery'] / 100) * 2.5;
 
         $part_2['total_one_to_seven'] = $part_2['plot_cost']['total_amount'] + $part_2['cost_of_approval']['total_cost_approval_tdr_premium'] + $part_2['constructionCost']['total_construction_expense']
             + $part_2['rental_shifting_charges']['shifting_and_reshifting']['total_cost_of_rental_shifting_brokerage'] + $part_2['all_consultation_fee_including_gst']['amount'] + $part_2['brokerage_and_commision_sale_value']['total'];
@@ -712,7 +719,8 @@ class ApiController extends \yii\web\Controller
     /**
      * Save inputs of Feasibility report, Save Payment info and return razorpay payment details
      */
-    public function actionFeasibilityReport() {
+    public function actionFeasibilityReport(): array
+    {
 
         $request = Yii::$app->request->bodyParams;
 
@@ -726,7 +734,7 @@ class ApiController extends \yii\web\Controller
         $model->is_payment_processed = 1;
         $model->created_at = date('Y-m-d H:i:s');
 
-        if($model->save()) {
+        if ($model->save()) {
 
             $reports = FeasibilityReport::find()
                 ->where([
@@ -764,8 +772,7 @@ class ApiController extends \yii\web\Controller
                 'report' => $model,
                 'paymentDetails' => $paymentDetails
             ];
-        }
-        else {
+        } else {
             $this->message = "Internal service error";
             $this->response_code = 500;
             $this->data = $model->getErrors();
@@ -778,7 +785,8 @@ class ApiController extends \yii\web\Controller
     /**
      * Get list of purchased Feasibility report by the user
      */
-    public function actionFeasibilityReportHistory($user_id) {
+    public function actionFeasibilityReportHistory($user_id): array
+    {
 
         $reports = FeasibilityReport::find()
             ->where([
@@ -798,7 +806,7 @@ class ApiController extends \yii\web\Controller
     /**
      * Verify user payment for Razorpay and save payment details
      */
-    public function actionVerifyRazorpay()
+    public function actionVerifyRazorpay(): array
     {
 
         $keyId = \Yii::$app->params['keyId'];
@@ -815,8 +823,7 @@ class ApiController extends \yii\web\Controller
                     'razorpay_signature' => Yii::$app->request->post('razorpay_signature'),
                 ];
                 $api->utility->verifyPaymentSignature($attributes);
-            }
-            catch(SignatureVerificationError $e) {
+            } catch (SignatureVerificationError $e) {
                 $this->response_code = 200;
                 $this->message = $e->getMessage();
                 return $this->sendResponse();
@@ -855,8 +862,7 @@ class ApiController extends \yii\web\Controller
                         $this->response_code = 200;
                         $this->message = 'Payment Successful';
                         return $this->sendResponse();
-                    }
-                    else {
+                    } else {
                         $this->response_code = 503;
                         $this->message = 'Payment Failed, Please try again later';
                     }
@@ -865,18 +871,26 @@ class ApiController extends \yii\web\Controller
                 $this->response_code = 201;
                 $this->message = 'Payment Successful, Unknown payment type';
                 return $this->sendResponse();
-            }
-
-            else {
+            } else {
                 $this->response_code = 504;
                 $this->message = 'Payment Failed, Please try again later';
             }
-        }
-        else {
+        } else {
             $this->response_code = 500;
             $this->message = 'Payment Failed, Please try again later';
         }
 
+        return $this->sendResponse();
+    }
+
+    /**
+     * Demo API
+     */
+    public function actionDemo(): array
+    {
+        $this->data = [
+            'demo' => 'Hello World'
+        ];
         return $this->sendResponse();
     }
 
