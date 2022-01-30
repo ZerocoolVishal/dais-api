@@ -57,6 +57,10 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         array (
             'cebe\\markdown\\' => 14,
         ),
+        'Z' => 
+        array (
+            'ZipStream\\' => 10,
+        ),
         'W' => 
         array (
             'Webmozart\\Assert\\' => 17,
@@ -90,14 +94,22 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         ),
         'P' => 
         array (
+            'Psr\\SimpleCache\\' => 16,
             'Psr\\Http\\Message\\' => 17,
+            'Psr\\Http\\Client\\' => 16,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
             'Prophecy\\' => 9,
+            'PhpOffice\\PhpSpreadsheet\\' => 25,
         ),
         'O' => 
         array (
             'Opis\\Closure\\' => 13,
+        ),
+        'M' => 
+        array (
+            'MyCLabs\\Enum\\' => 13,
+            'Matrix\\' => 7,
         ),
         'G' => 
         array (
@@ -119,6 +131,7 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         ),
         'C' => 
         array (
+            'Complex\\' => 8,
             'Codeception\\PHPUnit\\' => 20,
             'Codeception\\Extension\\' => 22,
             'Codeception\\' => 12,
@@ -183,6 +196,10 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         'cebe\\markdown\\' => 
         array (
             0 => __DIR__ . '/..' . '/cebe/markdown',
+        ),
+        'ZipStream\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
         ),
         'Webmozart\\Assert\\' => 
         array (
@@ -272,9 +289,18 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         array (
             0 => __DIR__ . '/..' . '/razorpay/razorpay/src',
         ),
+        'Psr\\SimpleCache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Psr\\Http\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
         'Psr\\EventDispatcher\\' => 
         array (
@@ -288,9 +314,21 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         array (
             0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
         ),
+        'PhpOffice\\PhpSpreadsheet\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
+        ),
         'Opis\\Closure\\' => 
         array (
             0 => __DIR__ . '/..' . '/opis/closure/src',
+        ),
+        'MyCLabs\\Enum\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
+        ),
+        'Matrix\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -315,6 +353,10 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
+        ),
+        'Complex\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
         ),
         'Codeception\\PHPUnit\\' => 
         array (

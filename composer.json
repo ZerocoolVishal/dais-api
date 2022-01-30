@@ -21,7 +21,8 @@
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
         "2amigos/yii2-file-upload-widget": "~1.0",
         "himiklab/yii2-sortable-grid-view-widget": "*",
-        "razorpay/razorpay": "2.*"
+        "razorpay/razorpay": "2.*",
+        "phpoffice/phpspreadsheet": "^1.21"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

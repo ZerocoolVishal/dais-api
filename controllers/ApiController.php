@@ -12,6 +12,8 @@ use app\models\Users;
 use Razorpay\Api\Api;
 use Razorpay\Api\Errors\SignatureVerificationError;
 use yii\web\Response;
+use PhpOffice\PhpSpreadsheet\Reader;
+use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 
 class ApiController extends \yii\web\Controller
 {
@@ -885,12 +887,86 @@ class ApiController extends \yii\web\Controller
 
     /**
      * Demo API
+     * @throws Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     public function actionDemo(): array
     {
+        $request = Yii::$app->request->bodyParams;
+
+        if (empty($request)) {
+            $this->response_code = 500;
+            $this->message = 'There was an error processing the request. Please try again later.';
+        }
+
+        $number1 = $request['num1'];
+        $number2 = $request['num2'];
+
+        $inputFileName =  getcwd() . '/spreadsheet.xlsx';
+        $reader = new Reader\Xlsx();
+        $spreadsheet = $reader->load($inputFileName);
+
+        $spreadsheet->getActiveSheet()->getCell('B1')->setValue($number1);
+        $spreadsheet->getActiveSheet()->getCell('B2')->setValue($number2);
+
         $this->data = [
-            'demo' => 'Hello World'
+            'demo' => 'Hello World',
+            'b1' => $spreadsheet->getActiveSheet()->getCell('B1')->getValue(),
+            'b2' => $spreadsheet->getActiveSheet()->getCell('B2')->getValue(),
+            'b3' => $spreadsheet->getActiveSheet()->getCell('B3')->getCalculatedValue()
         ];
+        return $this->sendResponse();
+    }
+
+    /**
+     * Generate Report API
+     */
+    public function actionGenerateReport(): array
+    {
+        $request = Yii::$app->request->bodyParams;
+
+        if (empty($request)) {
+            $this->response_code = 500;
+            $this->message = 'There was an error processing the request. Please try again later.';
+        }
+
+        try {
+            $inputFileName =  'FEASIBILITY';
+            $reader = new Reader\Xlsx();
+            $spreadsheet = $reader->load(getcwd()."/$inputFileName.xlsx");
+
+            $sheets = $spreadsheet->getAllSheets();
+
+            $sheet1 = $sheets[0];
+            $sheet1->getCell('G3')->setValue($request['plot_area']);
+            $sheet1->getCell('E15')->setValue($request['admissible_tdr']);
+            $sheet1->getCell('G19')->setValue($request['bu_area']);
+            $sheet1->getCell('E39')->setValue($request['existing_residential_members']);
+            $sheet1->getCell('E43')->setValue($request['existing_residential_members']);
+
+            $sheet2 = $sheets[1];
+            $sheet2->getCell('H2')->setValue($request['ready_reckoner_rate']);
+            $sheet2->getCell('H36')->setValue($request['bmc_approval_cost']);
+            $sheet2->getCell('H47')->setValue($request['residential_rent_for_one_month']);
+
+            $sheet3 = $sheets[2];
+            $sheet3->getCell('G7')->setValue($request['existing_carpet_area']);
+            $sheet3->getCell('F8')->setValue($request['percentage_of_additional_carpet_area']);
+            $sheet3->getCell('G14')->setValue($request['sale_rate_considered']);
+
+            $this->data = [
+                'source' => $inputFileName,
+                'balance_area_of_plot' => $sheet1->getCell('H3')->getCalculatedValue(),
+                'total_recovery' => $sheet3->getCell('G18')->getCalculatedValue(),
+                'balance' => $sheet3->getCell('G20')->getCalculatedValue(),
+                'stamp_duty_and_registration_charges' => $sheet3->getCell('G21')->getCalculatedValue(),
+                'net_balance' => $sheet3->getCell('G23')->getCalculatedValue()
+            ];
+        }
+        catch (\Exception $e) {
+            $this->message = $e->getMessage();
+        }
+
         return $this->sendResponse();
     }
 
