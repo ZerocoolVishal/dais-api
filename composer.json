@@ -22,7 +22,8 @@
         "2amigos/yii2-file-upload-widget": "~1.0",
         "himiklab/yii2-sortable-grid-view-widget": "*",
         "razorpay/razorpay": "2.*",
-        "phpoffice/phpspreadsheet": "^1.21"
+        "phpoffice/phpspreadsheet": "^1.21",
+        "mpdf/mpdf": "8.0.7"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

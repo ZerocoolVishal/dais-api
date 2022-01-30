@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yii;
 use app\helpers\RazorpayHelpers;
 use app\models\BookExpertVisit;
@@ -953,6 +955,11 @@ class ApiController extends \yii\web\Controller
             $sheet3->getCell('G7')->setValue($request['existing_carpet_area']);
             $sheet3->getCell('F8')->setValue($request['percentage_of_additional_carpet_area']);
             $sheet3->getCell('G14')->setValue($request['sale_rate_considered']);
+
+            $writer = IOFactory::createWriter($spreadsheet, 'Mpdf');
+            // $writer = new Xlsx($spreadsheet);
+            $time = time();
+            $writer->save("output/report-$time.pdf");
 
             $this->data = [
                 'source' => $inputFileName,

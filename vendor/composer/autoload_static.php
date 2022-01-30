@@ -40,6 +40,10 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
             'yii\\bootstrap4\\' => 15,
             'yii\\' => 4,
         ),
+        's' => 
+        array (
+            'setasign\\Fpdi\\' => 14,
+        ),
         'p' => 
         array (
             'phpDocumentor\\Reflection\\' => 25,
@@ -95,6 +99,7 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
+            'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
             'Psr\\EventDispatcher\\' => 20,
@@ -109,6 +114,7 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         'M' => 
         array (
             'MyCLabs\\Enum\\' => 13,
+            'Mpdf\\' => 5,
             'Matrix\\' => 7,
         ),
         'G' => 
@@ -174,6 +180,10 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         'yii\\' => 
         array (
             0 => __DIR__ . '/..' . '/yiisoft/yii2',
+        ),
+        'setasign\\Fpdi\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/setasign/fpdi/src',
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
@@ -293,6 +303,10 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/src',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-factory/src',
@@ -325,6 +339,10 @@ class ComposerStaticInit74903829c09477e474426e440717dd24
         'MyCLabs\\Enum\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
+        ),
+        'Mpdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mpdf/mpdf/src',
         ),
         'Matrix\\' => 
         array (
