@@ -922,6 +922,7 @@ class ApiController extends \yii\web\Controller
 
     /**
      * Generate Report API
+     * TODO: Complete this API and integrate it in APP
      */
     public function actionGenerateReport(): array
     {
@@ -956,10 +957,12 @@ class ApiController extends \yii\web\Controller
             $sheet3->getCell('F8')->setValue($request['percentage_of_additional_carpet_area']);
             $sheet3->getCell('G14')->setValue($request['sale_rate_considered']);
 
-            $writer = IOFactory::createWriter($spreadsheet, 'Mpdf');
-            // $writer = new Xlsx($spreadsheet);
-            $time = time();
-            $writer->save("output/report-$time.pdf");
+
+//            PHP 8 is REQUIRED FOR THIS
+//            $writer = IOFactory::createWriter($spreadsheet, 'Dompdf');
+//            // $writer = new Xlsx($spreadsheet);
+//            $time = time();
+//            $writer->save("output/report-$time.pdf");
 
             $this->data = [
                 'source' => $inputFileName,

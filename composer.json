@@ -23,7 +23,8 @@
         "himiklab/yii2-sortable-grid-view-widget": "*",
         "razorpay/razorpay": "2.*",
         "phpoffice/phpspreadsheet": "^1.21",
-        "mpdf/mpdf": "8.0.7"
+        "mpdf/mpdf": "^8.0",
+        "dompdf/dompdf": "^1.1"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
