@@ -922,6 +922,7 @@ class ApiController extends \yii\web\Controller
 
     /**
      * Generate Report API
+     * This API uses EXCEL to calculate the output form
      * TODO: Complete this API and integrate it in APP
      */
     public function actionGenerateReport(): array
